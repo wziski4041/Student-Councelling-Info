@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.HomeController">
+   <top>
+      <StackPane>
+         <Label fx:id="hometitle" text="HOME"/>
+         <padding><Insets bottom="0.0" left="20.0" right="20.0" top="90.0" /></padding>
+      </StackPane>
+   </top>
+   <center>
+      <StackPane><VBox fx:id="vbox" alignment="CENTER" spacing="20.0">
+         <Button 
+            fx:id="homebtn" 
+            text="New Form" 
+            onAction="#switchToForm"
+         />
+         <Button 
+            fx:id="homebtn" 
+            text="Student List" 
+            onAction="#switchToStudentList"
+         />
+         <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
+      </VBox></StackPane>
+   </center>
+</BorderPane>

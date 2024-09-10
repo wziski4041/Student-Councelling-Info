@@ -1,0 +1,30 @@
+#homebtn { 
+    -fx-pref-width: 200px;
+    -fx-padding: 2em;
+    -fx-font-size: 15px;
+} 
+
+#hometitle {
+    -fx-font-family:'Times New Roman', Times, serif;
+    -fx-font-size: 50px;
+}
+
+#formtitle {
+    -fx-font-family:'Times New Roman', Times, serif;
+    -fx-font-size: 50px;
+    -fx-padding: 0 70 0 0;
+}
+
+#backBtn {
+    -fx-pref-width: 75px;
+    -fx-pref-height: 50px;
+    -fx-font-size: 15px;
+}
+
+#formdatetimeTF{
+    -fx-pref-width: 300px;
+}
+
+#formsubmit{
+    -fx-font-size: 15px;
+}
