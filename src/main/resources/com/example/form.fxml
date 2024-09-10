@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+
+<GridPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.FormController" hgap="5" vgap="5" alignment="center">
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+    <children>
+        <StackPane GridPane.columnIndex="0" GridPane.rowIndex="0"><BorderPane >
+            <left><Button fx:id="backBtn" text="&lt;&lt;&lt;" onAction="#backToHome"/></left>
+            <center><Label fx:id="formtitle" text="Form" alignment="center"/></center>
+        </BorderPane></StackPane>
+    </children>
+    <children>
+        <Label fx:id="forminput" text="Name" 
+            GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextField fx:id="formname"
+            GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+    </children>
+    <children>
+        <Label fx:id="forminput" text="Class"
+            GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+        <TextField fx:id="formclass"
+            GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+    </children>
+    <children>
+        <Label fx:id="forminput" text="Date and Time"
+            GridPane.columnIndex="0" GridPane.rowIndex="8"/>
+        <StackPane GridPane.columnIndex="0" GridPane.rowIndex="9"><HBox>
+            <TextField fx:id="formdatetimeTF"/>
+            <Button fx:id="formdatetime" text="Date and Time Now" onAction="#currDate"/>
+        </HBox></StackPane>
+    </children>
+    <children>
+        <Label fx:id="forminput" text="Problem" 
+            GridPane.columnIndex="0" GridPane.rowIndex="11"/>
+        <TextField fx:id="formproblem"
+            GridPane.columnIndex="0" GridPane.rowIndex="12"/>
+    </children>
+    <children>
+        <StackPane GridPane.columnIndex="0" GridPane.rowIndex="14">
+            <Button fx:id="formsubmit" text="Submit" alignment="center"/>
+        </StackPane>
+    </children>
+</GridPane>
+
