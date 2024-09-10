@@ -5,7 +5,6 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -20,13 +19,12 @@ public class FormController {
     @FXML private Button formdatetime;
     @FXML private TextField formdatetimeTF;
 
-
     @FXML
     private void currDate() throws IOException {
-        LocalDateTime date = LocalDateTime.now();
+        LocalDateTime datetime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL yyyy, hh:mm:ss a");
-        String dateText = date.format(formatter);
-        this.formdatetimeTF.setText(dateText);
+        String datetimeText = datetime.format(formatter);
+        this.formdatetimeTF.setText(datetimeText);
     }
 
     public Button getformdate() {
