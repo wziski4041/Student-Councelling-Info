@@ -15,9 +15,11 @@ public class FormController {
         App.setRoot("home");
     }
 
-    
     @FXML private Button formdatetime;
+    @FXML private TextField formname;
+    @FXML private TextField formclass;
     @FXML private TextField formdatetimeTF;
+    @FXML private TextField formproblem;
 
     @FXML
     private void currDate() throws IOException {
@@ -27,12 +29,27 @@ public class FormController {
         this.formdatetimeTF.setText(datetimeText);
     }
 
-    public Button getformdate() {
-        return formdatetime;
+    @FXML
+    private void initialize() {
+        LocalDateTime datetime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL yyyy, hh:mm:ss a");
+        String datetimeText = datetime.format(formatter);
+        this.formdatetimeTF.setText(datetimeText);
     }
 
     @FXML
-    public void setformdate(String text) {
-        this.formdatetime.setText(text);
+    private void submit(){
+        String name = formname.getText();
+        String classofstudent = formclass.getText();
+        String datetime = formdatetimeTF.getText();
+        String problem = formproblem.getText();
+
+        App.createFile();
+
+        String studentInfo = name + "|" + classofstudent + "|" + datetime + "|" + problem;
+        App.writeToFile(studentInfo);
+        System.out.println(name + " " + classofstudent + " " + datetime + " " + problem);
     }
+
+    
 }

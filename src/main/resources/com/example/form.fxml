@@ -24,19 +24,19 @@
     <center>
         <GridPane hgap="5" vgap="5" alignment="center">
             <children>
-                <Label fx:id="forminput" text="Name" 
+                <Label fx:id="formlabel" text="Name" 
                     GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                 <TextField fx:id="formname"
                     GridPane.columnIndex="0" GridPane.rowIndex="2"/>
             </children>
             <children>
-                <Label fx:id="forminput" text="Class"
+                <Label fx:id="formlabel" text="Class"
                     GridPane.columnIndex="0" GridPane.rowIndex="4"/>
                 <TextField fx:id="formclass"
                     GridPane.columnIndex="0" GridPane.rowIndex="5"/>
             </children>
             <children>
-                <Label fx:id="forminput" text="Date and Time"
+                <Label fx:id="formlabel" text="Date and Time"
                     GridPane.columnIndex="0" GridPane.rowIndex="7"/>
                 <StackPane GridPane.columnIndex="0" GridPane.rowIndex="8"><HBox>
                     <TextField fx:id="formdatetimeTF"/>
@@ -44,14 +44,14 @@
                 </HBox></StackPane>
             </children>
             <children>
-                <Label fx:id="forminput" text="Problem" 
+                <Label fx:id="formlabel" text="Problem" 
                     GridPane.columnIndex="0" GridPane.rowIndex="10"/>
                 <TextField fx:id="formproblem"
                     GridPane.columnIndex="0" GridPane.rowIndex="11"/>
             </children>
             <children>
                 <StackPane GridPane.columnIndex="0" GridPane.rowIndex="13">
-                    <Button fx:id="formsubmit" text="Submit" alignment="center"/>
+                    <Button fx:id="formsubmit" text="Submit" alignment="center" onAction="#submit"/>
                 </StackPane>
             </children>
         </GridPane>
