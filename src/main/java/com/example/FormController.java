@@ -38,7 +38,7 @@ public class FormController {
     }
 
     @FXML
-    private void submit(){
+    private void submit() throws IOException{
         String name = formname.getText();
         String classofstudent = formclass.getText();
         String datetime = formdatetimeTF.getText();
@@ -49,6 +49,8 @@ public class FormController {
         String studentInfo = name + "|" + classofstudent + "|" + datetime + "|" + problem;
         App.writeToFile(studentInfo);
         System.out.println(name + " " + classofstudent + " " + datetime + " " + problem);
+
+        App.setRoot("home");
     }
 
     
