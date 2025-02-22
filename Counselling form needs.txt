@@ -1,0 +1,13 @@
+Counselling form：
+Print 
+要能学生，list几个sesi kaunseling
+delete
+
+add student area on left, sutdent's name(table) on right
+when click on student's name, automatically pop out student's information
+
+two data file: one for student's id, name, age, class, year start school, year end school, number of Counselling session
+               one for id, class, session datetime
+
+two form: one for student info
+          one for Counselling session

@@ -1,4 +1,4 @@
-#homebtn { 
+/* #homebtn { 
     -fx-pref-width: 200px;
     -fx-padding: 2em;
     -fx-font-size: 15px;
@@ -28,3 +28,11 @@
 #formsubmit{
     -fx-font-size: 15px;
 }
+
+#infotitle{
+    -fx-font-size: 20px;
+}
+
+#info{
+    -fx-font-size: 15px;
+} */
