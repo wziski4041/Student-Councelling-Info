@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import javafx.scene.control.Alert;
@@ -29,9 +30,23 @@ public class FileControl {
 
     private static String toCSV(ArrayList<String[]> data){
         StringBuilder csv = new StringBuilder();
-        for (int i = 0; i < data.size(); i++){
+        csv.append(toCSV(data.get(0)));
+        for (int i = 1; i < data.size(); i++){
             data.get(i)[0] = Integer.toString(i);
             csv.append(toCSV(data.get(i)));
+        }
+        return csv.toString();
+    }
+
+    private static String toCSV(ArrayList<String[]> data, ArrayList<String[]> otherData){
+        StringBuilder csv = new StringBuilder();
+        csv.append(toCSV(data.get(0)));
+        for (int i = 1; i < data.size(); i++){
+            data.get(i)[0] = Integer.toString(i);
+            csv.append(toCSV(data.get(i)));
+        }
+        for(int i = 0; i < otherData.size(); i++){
+            csv.append(toCSV(otherData.get(i)));
         }
         return csv.toString();
     }
@@ -58,9 +73,16 @@ public class FileControl {
     }
 
     //Overwrite whole file
-    private static void writeToFile(String filePath, ArrayList<String[]> data) throws IOException {
+    private static void overwriteToFile(String filePath, ArrayList<String[]> data) throws IOException {
         FileWriter write = new FileWriter(filePath, false);
         write.write(toCSV(data));
+        write.flush();
+        write.close();
+    }
+
+    private static void overwriteToFile(String filePath, ArrayList<String[]> data, ArrayList<String[]> otherData) throws IOException {
+        FileWriter write = new FileWriter(filePath, false);
+        write.write(toCSV(data, otherData));
         write.flush();
         write.close();
     }
@@ -128,7 +150,7 @@ public class FileControl {
         }
     }
 
-    public static void editStudent(String[] studentInfo, String studentID){
+    public static void editStudent(String[] studentInfo, String studentID, boolean giveAlert){
         String path = filePath[0];
 
         ArrayList<String[]> studentList = readStudentList();
@@ -145,12 +167,14 @@ public class FileControl {
 
 
         try{
-            writeToFile(path, studentList);
+            overwriteToFile(path, studentList);
 
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Student Edited");
-            alert.setHeaderText("Student info has been editted successfully.\nData saved to file - " + (new File(path)).getAbsolutePath());
-            alert.show();
+            if(giveAlert){
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Student Edited");
+                alert.setHeaderText("Student info has been editted successfully.\nData saved to file - " + (new File(path)).getAbsolutePath());
+                alert.show();
+            }
         } catch (IOException e) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error!");
@@ -191,23 +215,23 @@ public class FileControl {
         }
     }
 
-    public static void editSession(String[] studentInfo, String studentID){
+    public static void editSession(String[] sessionInfo, String studentID, String ID){
         String path = filePath[1];
 
-        ArrayList<String[]> studentList = readStudentList();
-        for(int i = 1; i < studentList.size(); i++){
-            if(studentList.get(i)[0].equals(studentID)){
-                if(studentInfo == null){
-                    studentList.remove(i);
+        ArrayList<String[]> sessionList = readSessionList(studentID);
+        for(int i = 1; i < sessionList.size(); i++){
+            if(sessionList.get(i)[0].equals(ID)){
+                if(sessionInfo == null){                        //studentInfo == null to delete session
+                    sessionList.remove(i);
                     break;
                 }
-                studentList.set(i, studentInfo);
+                sessionList.set(i, sessionInfo);
                 break;
             }
         }
 
         try{
-            writeToFile(path, studentList);
+            overwriteToFile(path, sessionList, otherSessionList);
             
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Session Edited");
@@ -217,6 +241,28 @@ public class FileControl {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error!");
             alert.setHeaderText("An Error occurred!\nSession is not editted!\nPlease try again.");
+            alert.show();
+        }
+    }
+
+    public static void deleteAllSessions(String studentID){
+        String path = filePath[1];
+
+        ArrayList<String[]> sessionList = readSessionList(studentID);
+        sessionList.subList(1, sessionList.size()).clear();
+
+        for(int i = 0; i < otherSessionList.size(); i++){
+            if(Integer.parseInt(otherSessionList.get(i)[1]) > Integer.parseInt(studentID)){
+                otherSessionList.get(i)[1] = Integer.toString(Integer.parseInt(otherSessionList.get(i)[1]) - 1);
+            }
+        }
+
+        try{
+            overwriteToFile(path, sessionList, otherSessionList);
+        } catch (IOException e) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error!");
+            alert.setHeaderText("An Error occurred!\nSessions of the Student is not editted!\nPlease try again.");
             alert.show();
         }
     }
@@ -252,7 +298,9 @@ public class FileControl {
     }
 
     //Specific student's session list
-    public static ArrayList<String[]> readSessionList(String studentID){
+    static ArrayList<String[]> otherSessionList;
+    static boolean specificSession = false;
+    public static ArrayList<String[]> readSessionList(String studentID){        // Still has problem when delete session of a student while there are sessions of other students in csv
         String path = filePath[1];
 
         File file = new File(path);
@@ -264,10 +312,12 @@ public class FileControl {
         }
 
         ArrayList<String[]> sessionList = readFile(path);
-
+        otherSessionList = new ArrayList<>();
         for (int i = 1; i < sessionList.size(); i++){
             if (!sessionList.get(i)[1].equals(studentID)){
+                otherSessionList.add(sessionList.get(i));
                 sessionList.remove(i);
+                specificSession = true;
                 i--;
             }
         }

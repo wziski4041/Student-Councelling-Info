@@ -94,13 +94,13 @@ public class Form {
             FileControl.addStudent(studentInfo);
         } else if(studentForm && !newStudent) {
             form.close();
-            FileControl.editStudent(studentInfo, studentID);
+            FileControl.editStudent(studentInfo, studentID, true);
         }else if(sessionForm && newSession) {
             form.close();
             FileControl.addSession(sessionInfo);
         } else if(sessionForm && !newSession) {
             form.close();
-            FileControl.editSession(sessionInfo, studentID);
+            // FileControl.editSession(sessionInfo, studentID);
         }
 
         studentID = null;

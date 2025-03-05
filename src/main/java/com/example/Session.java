@@ -8,12 +8,14 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -25,7 +27,7 @@ public class Session {
     
     public static VBox allSessions;
 
-    public static String studentID;
+    public static String[] studentInfo;
 
     private String ID;
     private String curClass;
@@ -153,7 +155,7 @@ public class Session {
         delete.setMinSize(30, 30);
         delete.setMaxSize(30, 30);
         delete.setOnAction(e -> {
-            allSessions.getChildren().remove(card);
+            delete();
         });
         card.add(delete, 6, 0);
 
@@ -212,7 +214,7 @@ public class Session {
         dateLabel = new Label(Date);
         dateLabel.setMinWidth(120);
         dateLabel.setMaxWidth(120);
-        curClassLabel.setVisible(true);
+        dateLabel.setVisible(true);
         card.add(dateLabel, 2, 2);
 
         time = new Label("Time");
@@ -262,7 +264,7 @@ public class Session {
         delete.setMinSize(30, 30);
         delete.setMaxSize(30, 30);
         delete.setOnAction(e -> {
-            allSessions.getChildren().remove(card);
+            delete();
         });
         card.add(delete, 6, 0);
 
@@ -271,12 +273,20 @@ public class Session {
 
     private void buttonHandler(){
         if(saveOrEdit.getText().equals("✓")){      // Save
+            if(curClassForm.getText().isEmpty() || timeForm.getText().isEmpty() || descriptionForm.getText().isEmpty()){
+                Alert emptyFields = new Alert(AlertType.ERROR);
+                emptyFields.setTitle("Error");
+                emptyFields.setHeaderText("Empty Fields!\nPlease fill in all fields.");
+                emptyFields.showAndWait();
+                
+                return;
+            }
             setCurClass(curClassForm.getText());
             setDate(dateForm.getValue().toString());
             setTime(timeForm.getText());
             setDescription(descriptionForm.getText());
 
-            String[] session = {getID(), studentID, getCurClass(), getDate(), getTime(), getDescription()};
+            String[] session = {getID(), studentInfo[0], getCurClass(), getDate(), getTime(), getDescription()};
 
             curClassLabel.setText(getCurClass());
             dateLabel.setText(getDate());
@@ -296,11 +306,20 @@ public class Session {
             saveOrEdit.setText("🖊");
 
             if(newSession){
+                newSession = false;
                 Details.sessions.add(session);
                 FileControl.addSession(session);
             }else{
-                FileControl.editSession(session, ID);
+                FileControl.editSession(session, studentInfo[0], ID);
             }
+
+            if(!studentInfo[3].equals(getCurClass())){
+                studentInfo[3] = getCurClass();
+                FileControl.editStudent(studentInfo, studentInfo[0], false);
+            }
+
+            Home home = new Home();
+            home.reloadDetails();
         }else{                                              // Edit
             curClassLabel.setVisible(false);
             dateLabel.setVisible(false);
@@ -313,39 +332,51 @@ public class Session {
             descriptionForm.setVisible(true);
 
             saveOrEdit.setText("✓");
-        }
-    }
-    
-    public void editSession(){
-        String studentID = "";   // Get student ID from selected student
-        
-        
-        String id = "";          // Get session ID from button pressed
-        Form.sessionID = id;
 
-        ArrayList<String[]> sessions = FileControl.readSessionList(studentID);
-        for (String[] session : sessions) {
-            if (session[0].equals(id)) {
-                Form.sessionInfo = session;
-                break;
+            if(!studentInfo[3].equals(getCurClass())){
+                studentInfo[3] = getCurClass();
+                FileControl.editStudent(studentInfo, studentInfo[0], false);
             }
         }
-
-        Form.sessionForm = true;
-
-        // try {
-        //     Scene formScene = new Scene(App.loadFXML("sessionform"), 350, 250);
-
-        //     form.setScene(formScene);
-        //     form.show();
-        //     form.setTitle("Edit Session Info");
-        //     form.setAlwaysOnTop(true);
-
-        //     Form.form = form;
-        // } catch (IOException e) {
-        //     System.out.println("Error: Failed to load session form.");
-        // }
     }
+
+    private void delete(){
+        FileControl.editSession(null, studentInfo[0], getID());
+
+        Home home = new Home();
+        home.reloadDetails();
+    }
+    
+    // public void editSession(){
+    //     String studentID = "";   // Get student ID from selected student
+        
+        
+    //     String id = "";          // Get session ID from button pressed
+    //     Form.sessionID = id;
+
+    //     ArrayList<String[]> sessions = FileControl.readSessionList(studentID);
+    //     for (String[] session : sessions) {
+    //         if (session[0].equals(id)) {
+    //             Form.sessionInfo = session;
+    //             break;
+    //         }
+    //     }
+
+    //     Form.sessionForm = true;
+
+    //     // try {
+    //     //     Scene formScene = new Scene(App.loadFXML("sessionform"), 350, 250);
+
+    //     //     form.setScene(formScene);
+    //     //     form.show();
+    //     //     form.setTitle("Edit Session Info");
+    //     //     form.setAlwaysOnTop(true);
+
+    //     //     Form.form = form;
+    //     // } catch (IOException e) {
+    //     //     System.out.println("Error: Failed to load session form.");
+    //     // }
+    // }
     
     public String getID(){
         return ID;

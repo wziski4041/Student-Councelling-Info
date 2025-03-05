@@ -1,9 +1,29 @@
 package com.example;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.apache.poi.xwpf.usermodel.TableRowAlign;
+import org.apache.poi.xwpf.usermodel.TableWidthType;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.apache.poi.xwpf.usermodel.XWPFTable.XWPFBorderType;
+import org.apache.xmlbeans.XmlCursor;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
+
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,10 +40,12 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
-public class Details {
 
+public class Details {
     Stage form = new Stage();
 
     @FXML Label detailsname;
@@ -35,15 +57,19 @@ public class Details {
 
     @FXML VBox detailsallSessions;
     
-    static String id;
     static String[] studentInfo;
-    static List<String[]> sessions;
-    static List<Session> sessionCards = new ArrayList<>();
+    static List<String[]> sessions;                         // Sessions read from file
+    static List<Session> sessionCards = new ArrayList<>();  // Sessions displayed
 
     // List<GridPane> cards = new ArrayList<>();
     
     @FXML
     private void initialize(){
+        sessions = FileControl.readSessionList(studentInfo[0]);
+        studentInfo[6] = String.valueOf(sessions.size() - 1);               // Save this to file
+        FileControl.editStudent(studentInfo, studentInfo[0], false);
+        App.reloadHome();
+
         detailsname.setText(studentInfo[1]);
         detailsage.setText(studentInfo[2]);
         detailsclass.setText(studentInfo[3]);
@@ -51,24 +77,152 @@ public class Details {
         detailsendschool.setText(studentInfo[5]);
         detailsnumSessions.setText(studentInfo[6]);
 
-        Session.studentID = id;
+        Session.studentInfo = studentInfo;
         Session.allSessions = detailsallSessions;
         for(int i = 1; i < sessions.size(); i++){
             sessionCards.add(new Session(sessions.get(i)[0], sessions.get(i)[2], sessions.get(i)[3], sessions.get(i)[4], sessions.get(i)[5]));
         }
-
-
     }
 
     @FXML
     private void addSessionCard(){
         Session.allSessions = detailsallSessions;
         sessionCards.add(new Session(sessions.size()));
+        studentInfo[6] = String.valueOf(sessionCards.size());
     }
 
     @FXML
     private void printStudentDetails(){
+        try (XWPFDocument doc = new XWPFDocument()) {
+            
+            XWPFParagraph title = doc.createParagraph();
 
+            XWPFRun run = title.createRun();
+            title.setAlignment(ParagraphAlignment.CENTER);
+            run.setFontSize(20);
+            run.setBold(true);
+            run.setText("Student Details");
+
+            XWPFParagraph paragraph = doc.createParagraph();
+            XWPFRun studentInfoRun = paragraph.createRun();
+            studentInfoRun.setFontSize(12);
+
+            studentInfoRun.setText("Name: ");
+            studentInfoRun.addTab();
+            studentInfoRun.addTab();
+            studentInfoRun.addTab();
+            studentInfoRun.setText(studentInfo[1]);
+            studentInfoRun.addBreak();
+
+            studentInfoRun.setText("Age: ");
+            studentInfoRun.addTab();
+            studentInfoRun.addTab();
+            studentInfoRun.addTab();
+            studentInfoRun.addTab();
+            studentInfoRun.setText(studentInfo[2]);
+            studentInfoRun.addBreak();
+
+            studentInfoRun.setText("Class: ");
+            studentInfoRun.addTab();
+            studentInfoRun.addTab();
+            studentInfoRun.addTab();
+            studentInfoRun.addTab();
+            studentInfoRun.setText(studentInfo[3]);
+            studentInfoRun.addBreak();
+
+            studentInfoRun.setText("Start School: ");
+            studentInfoRun.addTab();
+            studentInfoRun.addTab();
+            studentInfoRun.addTab();
+            studentInfoRun.setText(studentInfo[4]);
+            studentInfoRun.addBreak();
+
+            studentInfoRun.setText("End School: ");
+            studentInfoRun.addTab();
+            studentInfoRun.addTab();
+            studentInfoRun.addTab();
+            studentInfoRun.setText(studentInfo[5]);
+            studentInfoRun.addBreak();
+
+            studentInfoRun.setText("Number of Sessions: ");
+            studentInfoRun.addTab();
+            studentInfoRun.setText(studentInfo[6]);
+            studentInfoRun.addBreak();
+
+            studentInfoRun.setText("All Sessions:- ");
+
+            XWPFTable sessionTable = doc.createTable();
+            XWPFTableRow tableRowOne = sessionTable.getRow(0);
+            tableRowOne.getCell(0).setText("Class");
+            tableRowOne.getCell(0).setWidth("2000");
+            tableRowOne.addNewTableCell().setText("Date");
+            tableRowOne.getCell(1).setWidth("4000");
+            tableRowOne.addNewTableCell().setText("Time");
+            tableRowOne.getCell(2).setWidth("4000");
+            tableRowOne.addNewTableCell().setText("Description");
+            tableRowOne.getCell(3).setWidth("10000");
+
+            for (int i = 1; i < sessions.size(); i++) {
+                XWPFTableRow tableRow = sessionTable.createRow();
+                tableRow.getCell(0).setText(sessions.get(i)[2]);
+                tableRow.getCell(1).setText(sessions.get(i)[3]);
+                tableRow.getCell(2).setText(sessions.get(i)[4]);
+                tableRow.getCell(3).setText(sessions.get(i)[5]);
+            }
+
+            //Creating a File chooser
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save");
+            fileChooser.setInitialFileName(studentInfo[1] + ".docx");
+            fileChooser.setInitialDirectory(new File("C:\\Users\\I Khing\\Downloads"));
+            fileChooser.getExtensionFilters().add(new ExtensionFilter("Word Document", "*.docx"));
+
+            //Opening a dialog box
+            Stage saveDialog = new Stage();
+            OutputStream os = new FileOutputStream(fileChooser.showSaveDialog(saveDialog));
+            doc.write(os);
+            System.out.println("Data written successfully");
+            
+            doc.close();
+        } catch (IOException e1) {
+            System.out.println("Error: Failed to write to file.");
+        }
+        
+
+
+        // try (XWPFDocument doc = new XWPFDocument()) {
+
+        //     XWPFParagraph p = doc.createParagraph();
+
+        //     XWPFRun r = p.createRun();
+        //     r.setText("Some Text");
+        //     r.setBold(true);
+        //     r = p.createRun();
+        //     r.setText("Goodbye");
+
+        //     CTP ctP = CTP.Factory.newInstance();
+        //     CTText t = ctP.addNewR().addNewT();
+        //     t.setStringValue("Hello, World!");              // Header
+        //     XWPFParagraph[] pars = new XWPFParagraph[1];
+        //     p = new XWPFParagraph(ctP, doc);
+        //     pars[0] = p;
+
+        //     XWPFHeaderFooterPolicy hfPolicy = doc.createHeaderFooterPolicy();
+        //     hfPolicy.createHeader(XWPFHeaderFooterPolicy.DEFAULT, pars);
+
+        //     ctP = CTP.Factory.newInstance();
+        //     t = ctP.addNewR().addNewT();
+        //     t.setStringValue("My Footer");
+        //     pars[0] = new XWPFParagraph(ctP, doc);
+        //     hfPolicy.createFooter(XWPFHeaderFooterPolicy.DEFAULT, pars);
+
+        //     try (OutputStream os = new FileOutputStream(new File("header.docx"))) {
+        //         doc.write(os);
+        //         System.out.println("Data written successfully");
+        //     }
+        // } catch (IOException e) {
+        //     System.out.println("Error: Failed to write to file.");
+        // }
     }
 
     public static void save(){
