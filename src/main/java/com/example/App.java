@@ -2,19 +2,13 @@ package com.example;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Screen;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Scanner;
-import java.util.ArrayList;
 
 /**
  * JavaFX App
@@ -26,21 +20,26 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        stage.setResizable(false);
         home = stage;
 
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         scene = new Scene(loadFXML("home") , 440, 580);
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
-        stage.setTitle("Counselling Data");
+        stage.setTitle("Data Kaunseling");
     }
 
+    // Reloads the whole home.fxml file, refreshing the table
     public static void reloadHome() {
         try {
             scene.setRoot(loadFXML("home"));
         } catch (IOException e) {
-            System.out.println("Error: Failed to reload home.");
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Failed to reload home. Table data not refreshed.");
+            alert.setContentText("如果这个跑出来很多次，找Khing解决");
+            alert.show();
         }
     }
 

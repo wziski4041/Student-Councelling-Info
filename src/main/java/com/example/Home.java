@@ -1,22 +1,16 @@
 package com.example;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class Home {
@@ -27,6 +21,7 @@ public class Home {
     Stage form = new Stage();
     Stage details = new Stage();
     static Scene detailsScene;
+    boolean sceneOpened = false;
 
     @FXML
     private void initialize(){
@@ -41,19 +36,6 @@ public class Home {
             });
             return row ;
         });
-
-        filter.setOnKeyTyped(e -> {
-            String text = filter.getText();
-            ObservableList<Student> list = table.getItems();
-            list.clear();
-
-            ArrayList<String[]> students = FileControl.readStudentList();
-            for (int i = 1; i < students.size(); i++){
-                if(students.get(i)[1].contains(text) || students.get(i)[2].contains(text) || students.get(i)[3].contains(text) || students.get(i)[6].contains(text)){
-                    list.add(new Student(students.get(i)[0], students.get(i)[1], students.get(i)[2], students.get(i)[3], students.get(i)[6]));
-                }
-            }
-        });
     }
 
     private void loadTable(){
@@ -62,7 +44,16 @@ public class Home {
 
         ArrayList<String[]> students = FileControl.readStudentList();
         for (int i = 1; i < students.size(); i++){
-            list.add(new Student(students.get(i)[0], students.get(i)[1], students.get(i)[2], students.get(i)[3], students.get(i)[6]));
+            String studentName_s = students.get(i)[1];
+            if(studentName_s.contains("|")){
+                studentName_s = studentName_s.replace("|", "\n");
+            }
+            String studentClass_s = students.get(i)[2];
+            if(studentClass_s.contains("|")){
+                studentClass_s = studentClass_s.replace("|", "\n");
+            }
+
+            list.add(new Student(students.get(i)[0], studentName_s, studentClass_s, students.get(i)[3], students.get(i)[5]));
         }
     }
 
@@ -73,13 +64,16 @@ public class Home {
             
             form.setScene(formScene);
             form.show();
-            form.setTitle("Student Form");
+            form.setTitle("Tambah Pelajar");
             form.setAlwaysOnTop(true);
 
-            Form.studentForm = true;
             Form.form = form;
         } catch (IOException e) {
-            System.out.println("Error: Failed to load student form.");
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Failed to load student form.\nPlease try again.");
+            alert.setContentText("如果这个跑出来很多次，找Khing解决");
+            alert.show();
         }
     }
 
@@ -87,7 +81,10 @@ public class Home {
     private void toEditStudentForm(){
         ObservableList<Student> selected = table.getSelectionModel().getSelectedItems();
         if(selected.size() == 0){
-            System.out.println("No student selected");
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Tiada Pelajar dipilih");
+            alert.setHeaderText("Sila pilih Pelajar.");
+            alert.show();
             return;
         }
         
@@ -102,19 +99,21 @@ public class Home {
             }
         }
 
-        Form.studentForm = true;
-
         try {
-            Scene formScene = new Scene(App.loadFXML("studentform"), 350, 300);
+            Scene formScene = new Scene(App.loadFXML("studentform"), 350, 350);
 
             form.setScene(formScene);
             form.show();
-            form.setTitle("Edit Student Info");
+            form.setTitle("Tukar Info Pelajar");
             form.setAlwaysOnTop(true);
 
             Form.form = form;
         } catch (IOException e) {
-            System.out.println("Error: Failed to load student form.");
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Failed to load student form.\nPlease try again.");
+            alert.setContentText("如果这个跑出来很多次，找Khing解决");
+            alert.show();
         }
     }
 
@@ -122,7 +121,10 @@ public class Home {
     private void deleteStudent(){
         ObservableList<Student> selected = table.getSelectionModel().getSelectedItems();
         if(selected.size() == 0){
-            System.out.println("No student selected");
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Tiada Pelajar dipilih");
+            alert.setHeaderText("Sila pilih Pelajar.");
+            alert.show();
             return;
         }
         
@@ -138,7 +140,10 @@ public class Home {
     private void toStudentDetails(){
         ObservableList<Student> selected = table.getSelectionModel().getSelectedItems();
         if(selected.size() == 0){
-            System.out.println("No student selected");
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Tiada Pelajar dipilih");
+            alert.setHeaderText("Sila pilih Pelajar.");
+            alert.show();
             return;
         }
         
@@ -153,39 +158,70 @@ public class Home {
         }
 
         try {
-            detailsScene = new Scene(App.loadFXML("studentdetails"), 500, 700);
+            detailsScene = new Scene(App.loadFXML("studentdetails"), 500, 800);
         } catch (IOException e) {
-            System.out.println("Error: Failed to load student details.");
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Failed to load student details.\nPlease try again.");
+            alert.setContentText("如果这个跑出来很多次，找Khing解决");
+            alert.show();
         }
         
         details.setScene(detailsScene);
+        details.setResizable(false);
         details.show();
-        details.setTitle("Student Details");
-        details.setOnCloseRequest(e -> {
-            Details.save();
-        });
+        details.setTitle("Data Kaunseling Student");
     }
 
     public void reloadDetails(){
         try {
             Home.detailsScene.setRoot(App.loadFXML("studentdetails"));
         } catch (IOException e) {
-            System.out.println("Error: Failed to reload student details.");
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Failed to reload student details.\nSession datas not refreshed.");
+            alert.setContentText("如果这个跑出来很多次，找Khing解决");
+            alert.show();
         }
-    }
-
-    @FXML
-    public void submit(){
-
-    }
-
-    @FXML
-    public void listoutStudents(){
-
     }
     
     @FXML
     public void filter(){
+        String text = filter.getText().toLowerCase();
+        ObservableList<Student> list = table.getItems();
+        list.clear();
 
+        ArrayList<String[]> students = FileControl.readStudentList();
+        for (int i = 1; i < students.size(); i++){
+            String name = students.get(i)[1];
+            String cls = students.get(i)[2];
+            if(name.contains("|")){
+                name = name.replace("|", "\n");
+            }
+            if(cls.contains("|")){
+                cls = cls.replace("|", "\n");
+            }
+
+            text = text.replace("/", "");
+            text = text.replace("-", "");
+            text = text.replace(":", "");
+            text = text.replace(".", "");
+    
+            ArrayList<String[]> sessions = FileControl.readSessionList(students.get(i)[0]);
+
+            for(int j = 1; j < sessions.size(); j++){
+                String date = sessions.get(j)[2];
+                String time = sessions.get(j)[3];
+            
+                date = date.replace("/", "");
+                time = time.replace(":", "");
+                time = time.replace(".", "");
+
+                if(name.toLowerCase().contains(text) || cls.toLowerCase().contains(text) || students.get(i)[3].toLowerCase().contains(text) || students.get(i)[5].toLowerCase().contains(text) || date.contains(text) || time.contains(text)){
+                    list.add(new Student(students.get(i)[0], name, cls, students.get(i)[3], students.get(i)[5]));
+                    break;
+                }
+            }
+        }
     }
 }

@@ -5,18 +5,18 @@ import javafx.beans.property.SimpleStringProperty;
 public class Student {
     private final SimpleStringProperty id = new SimpleStringProperty("");
     private final SimpleStringProperty name = new SimpleStringProperty("");
-    private final SimpleStringProperty age = new SimpleStringProperty("");
     private final SimpleStringProperty stuClass = new SimpleStringProperty("");
+    private final SimpleStringProperty profile = new SimpleStringProperty("");
     private final SimpleStringProperty numSessions = new SimpleStringProperty("");
     
     public Student(){
         this("", "", "", "", "");
     }
     
-    public Student(String id, String name, String age, String stuClass, String numSessions){
+    public Student(String id, String name, String stuClass, String profile, String numSessions){
         setId(id);
         setName(name);
-        setAge(age);
+        setProfile(profile);
         setClass(stuClass);
         setNumSessions(numSessions);
     }
@@ -34,13 +34,6 @@ public class Student {
     public void setName(String name_){
         name.set(name_);
     }
-    
-    public String getAge(){
-        return age.get();
-    }
-    public void setAge(String age_){
-        age.set(age_);
-    }
 
     public String getStuClass(){
         return stuClass.get();
@@ -49,6 +42,13 @@ public class Student {
         stuClass.set(stuClass_);
     }
     
+    public String getProfile(){
+        return profile.get();
+    }
+    public void setProfile(String profile_){
+        profile.set(profile_);
+    }
+
     public String getNumSessions(){
         return numSessions.get();
     }

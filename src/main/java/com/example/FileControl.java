@@ -2,11 +2,9 @@ package com.example;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 import javafx.scene.control.Alert;
@@ -55,12 +53,16 @@ public class FileControl {
         try {
             File file = new File(filePath);
             if (file.createNewFile()){
-                System.out.println("File created: " + file.getName());
+                // System.out.println("File created: " + file.getName());
             } else {
-                System.out.println("File already exists - " + file.getName());
+                // System.out.println("File already exists - " + file.getName());
             }
         } catch (IOException e) {
-            System.out.println("Error creating new file: " + filePath);
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error!");
+            alert.setHeaderText("Error creating new file to save data:\n" + filePath);
+            alert.setContentText("如果这个跑出来很多次，找Khing解决");
+            alert.show();
         }
     }
 
@@ -98,7 +100,7 @@ public class FileControl {
             }
             scan.close();
         } catch (FileNotFoundException e) {
-            System.out.println("Error reading file: " + filePath);
+            createFile(filePath);
         }
 
         return fullList;
@@ -127,10 +129,10 @@ public class FileControl {
             createStudentList();
 
             try{
-                writeToFile(path, "Student ID,Name,Age,Class,Year Start School,Year End School,Number of Session\n");
+                writeToFile(path, "ID Pelajar,Nama,Kelas,Profil Pelajar,Kes,Bilangan Sesi\n");
             }catch(IOException e){}
 
-            studentList = readStudentList();
+            studentList = readStudentList();  
             studentID = studentList.size();
             studentInfo[0] = Integer.toString(studentID);
         }
@@ -140,12 +142,13 @@ public class FileControl {
 
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Student Added");
-            alert.setHeaderText("Student has been added successfully.\nData saved to file - " + (new File(path)).getAbsolutePath());
+            alert.setHeaderText("Student has been added successfully.\nData saved to file:\n" + (new File(path)).getAbsolutePath());
             alert.show();
         } catch (IOException e) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error!");
             alert.setHeaderText("An Error occurred!\nStudent is not added!\nPlease try again.");
+            alert.setContentText("如果这个跑出来很多次，找Khing解决");
             alert.show();
         }
     }
@@ -172,13 +175,14 @@ public class FileControl {
             if(giveAlert){
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.setTitle("Student Edited");
-                alert.setHeaderText("Student info has been editted successfully.\nData saved to file - " + (new File(path)).getAbsolutePath());
+                alert.setHeaderText("Student info has been editted successfully.\nData saved to file:\n" + (new File(path)).getAbsolutePath());
                 alert.show();
             }
         } catch (IOException e) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error!");
             alert.setHeaderText("An Error occurred!\nStudent is not editted!\nPlease try again.");
+            alert.setContentText("如果这个跑出来很多次，找Khing解决");
             alert.show();
         }
         
@@ -196,7 +200,7 @@ public class FileControl {
             createSessionList();
 
             try{
-                writeToFile(path, "Session ID,Student ID,Class,Session Date and Time,Description\n");
+                writeToFile(path, "ID Sesi,ID Pelajar,Tarikh Sesi,Masa,Tujuan Kaunseling\n");
             }catch(IOException e){}
         }
 
@@ -205,12 +209,13 @@ public class FileControl {
 
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Session Added");
-            alert.setHeaderText("Session has been added successfully.\nData saved to file - " + (new File(path)).getAbsolutePath());
+            alert.setHeaderText("Session has been added successfully.\nData saved to file:\n" + (new File(path)).getAbsolutePath());
             alert.show();
         } catch (IOException e) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error!");
             alert.setHeaderText("An Error occurred!\nSession is not added!\nPlease try again.");
+            alert.setContentText("如果这个跑出来很多次，找Khing解决");
             alert.show();
         }
     }
@@ -235,12 +240,13 @@ public class FileControl {
             
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Session Edited");
-            alert.setHeaderText("Session info has been editted successfully.\nData saved to file - " + (new File(path)).getAbsolutePath());
+            alert.setHeaderText("Session info has been editted successfully.\nData saved to file:\n" + (new File(path)).getAbsolutePath());
             alert.show();
         } catch (IOException e) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error!");
             alert.setHeaderText("An Error occurred!\nSession is not editted!\nPlease try again.");
+            alert.setContentText("如果这个跑出来很多次，找Khing解决");
             alert.show();
         }
     }
@@ -263,9 +269,12 @@ public class FileControl {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error!");
             alert.setHeaderText("An Error occurred!\nSessions of the Student is not editted!\nPlease try again.");
+            alert.setContentText("如果这个跑出来很多次，找Khing解决");
             alert.show();
         }
     }
+
+
 
     public static ArrayList<String[]> readStudentList(){
         String path = filePath[0];
@@ -274,7 +283,7 @@ public class FileControl {
         if(!file.exists()){
             createStudentList();
             try{
-                writeToFile(path, "Student ID,Name,Age,Year Start School,Year End School,Number of Session\n");
+                writeToFile(path,"ID Pelajar,Nama,Kelas,Profil Pelajar,Kes,Bilangan Sesi\n");
             }catch(IOException e){}
         }
 
@@ -289,7 +298,7 @@ public class FileControl {
         if(!file.exists()){
             createSessionList();
             try{
-                writeToFile(path, "Session ID,Student ID,Class,Session Date,Time,Description\n");
+                writeToFile(path, "ID Sesi,ID Pelajar,Tarikh Sesi,Masa,Tujuan Kaunseling\n");
             }catch(IOException e){}
         }
 
@@ -300,14 +309,14 @@ public class FileControl {
     //Specific student's session list
     static ArrayList<String[]> otherSessionList;
     static boolean specificSession = false;
-    public static ArrayList<String[]> readSessionList(String studentID){        // Still has problem when delete session of a student while there are sessions of other students in csv
+    public static ArrayList<String[]> readSessionList(String studentID){
         String path = filePath[1];
 
         File file = new File(path);
         if(!file.exists()){
             createSessionList();
             try{
-                writeToFile(path, "Session ID,Student ID,Class,Session Date,Time,Description\n");
+                writeToFile(path, "ID Sesi,ID Pelajar,Tarikh Sesi,Masa,Tujuan Kaunseling\n");
             }catch(IOException e){}
         }
 

@@ -1,10 +1,7 @@
 package com.example;
 
-import java.time.LocalDate;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -13,40 +10,32 @@ public class Form {
 
     static Stage form = new Stage();
 
-    @FXML TextField formname;
-    @FXML TextField formage;
-    @FXML TextField formclass;
-    @FXML TextField formyearstart;
-    @FXML TextField formyearend;
+    @FXML TextArea formnama;
+    @FXML TextArea formkelas;
+    @FXML TextField formprofil;
+    @FXML TextField formkes;
 
     @FXML Button formsubmit;
 
-    @FXML DatePicker formdate;
-    @FXML TextField formtime;
-    @FXML TextArea formdescription;
-
-    static String studentID, sessionID;
-    static String[] studentInfo, sessionInfo;
-    static boolean studentForm = false, sessionForm = false;
-    boolean newStudent = true, newSession = true;
+    static String studentID;
+    static String[] studentInfo;
+    boolean newStudent = true;
 
     @FXML
     public void initialize() {
-        if(sessionForm && sessionInfo != null) {
-            formclass.setText(sessionInfo[1]);
-            formdate.setValue(LocalDate.parse(sessionInfo[2]));
-            formtime.setText(sessionInfo[3]);
-            formdescription.setText(sessionInfo[4]);
-
-            formsubmit.setText("Edit Session");
-
-            newSession = false;
-        }else if(studentForm && studentInfo != null) {
-            formname.setText(studentInfo[1]);
-            formage.setText(studentInfo[2]);
-            formclass.setText(studentInfo[3]);
-            formyearstart.setText(studentInfo[4]);
-            formyearend.setText(studentInfo[5]);
+        if(studentInfo != null) {
+            String nama = studentInfo[1];
+            if(nama.contains("|")) {
+                 nama = nama.replace("|", "\n");
+            }
+            formnama.setText(nama);
+            String kelas = studentInfo[2];
+            if(kelas.contains("|")) {
+                kelas = kelas.replace("|", "\n");
+            }
+            formkelas.setText(kelas);
+            formprofil.setText(studentInfo[3]);
+            formkes.setText(studentInfo[4]);
 
             formsubmit.setText("Edit Student");
 
@@ -58,57 +47,37 @@ public class Form {
     private void cancel() {
         form.close();
         studentID = null;
-        sessionID = null;
         studentInfo = null;
-        sessionInfo = null;
-        studentForm = false;
-        sessionForm = false;
     }
 
     @FXML
     private void submit() {
-        if(sessionForm) {
-            if(newSession) {
-                sessionInfo = new String[5];
-            }
-
-            sessionInfo[1] = formclass.getText();
-            sessionInfo[2] = formdate.getValue().toString();
-            sessionInfo[3] = formtime.getText();
-            sessionInfo[4] = formdescription.getText();
-        }else if(studentForm) {
-            if(newStudent) {
-                studentInfo = new String[7];
-                studentInfo[6] = "0";
-            }
-
-            studentInfo[1] = formname.getText();
-            studentInfo[2] = formage.getText();
-            studentInfo[3] = formclass.getText();
-            studentInfo[4] = formyearstart.getText();
-            studentInfo[5] = formyearend.getText();
+        if(newStudent) {
+            studentInfo = new String[6];
+            studentInfo[5] = "0";
         }
 
-        if(studentForm && newStudent) {
+        studentInfo[1] = formnama.getText();
+        if(studentInfo[1].contains("\n")) {
+            studentInfo[1] = studentInfo[1].replace("\n", "|");
+        }
+        studentInfo[2] = formkelas.getText();
+        if(studentInfo[2].contains("\n")) {
+            studentInfo[2] = studentInfo[2].replace("\n", "|");
+        }
+        studentInfo[3] = formprofil.getText();
+        studentInfo[4] = formkes.getText();
+
+        if(newStudent) {
             form.close();
             FileControl.addStudent(studentInfo);
-        } else if(studentForm && !newStudent) {
+        } else {
             form.close();
             FileControl.editStudent(studentInfo, studentID, true);
-        }else if(sessionForm && newSession) {
-            form.close();
-            FileControl.addSession(sessionInfo);
-        } else if(sessionForm && !newSession) {
-            form.close();
-            // FileControl.editSession(sessionInfo, studentID);
         }
 
         studentID = null;
-        sessionID = null;
         studentInfo = null;
-        sessionInfo = null;
-        studentForm = false;
-        sessionForm = false;
 
         App.reloadHome();
     }
