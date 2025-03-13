@@ -158,7 +158,7 @@ public class Home {
         }
 
         try {
-            detailsScene = new Scene(App.loadFXML("studentdetails"), 500, 800);
+            detailsScene = new Scene(App.loadFXML("studentdetails"), 500, 700);
         } catch (IOException e) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error");

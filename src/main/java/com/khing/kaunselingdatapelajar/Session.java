@@ -69,42 +69,42 @@ public class Session {
         card.add(sessionID, 0, 0);
 
         date = new Label("Tarikh");
-        date.setMinWidth(100);
-        date.setMaxWidth(100);
+        date.setMinWidth(70);
+        date.setMaxWidth(70);
         card.add(date, 1, 1);
         dateForm = new DatePicker();
         dateForm.setValue(LocalDate.now());
-        dateForm.setMinWidth(150);
-        dateForm.setMaxWidth(150);
+        dateForm.setMinWidth(180);
+        dateForm.setMaxWidth(180);
         dateForm.setVisible(true);
         card.add(dateForm, 2, 1);
         dateLabel = new Label();
-        dateLabel.setMinWidth(150);
-        dateLabel.setMaxWidth(150);
+        dateLabel.setMinWidth(180);
+        dateLabel.setMaxWidth(180);
         dateLabel.setVisible(false);
         card.add(dateLabel, 2, 1);
 
         time = new Label("Masa");
-        time.setMinWidth(100);
-        time.setMaxWidth(100);
+        time.setMinWidth(70);
+        time.setMaxWidth(70);
         card.add(time, 1, 2);
         timeForm = new TextField();
-        timeForm.setMinWidth(150);
-        timeForm.setMaxWidth(150);
+        timeForm.setMinWidth(180);
+        timeForm.setMaxWidth(180);
         timeForm.setVisible(true);
         card.add(timeForm, 2, 2);
         timeLabel = new Label();
-        timeLabel.setMinWidth(150);
-        timeLabel.setMaxWidth(150);
+        timeLabel.setMinWidth(180);
+        timeLabel.setMaxWidth(180);
         timeLabel.setVisible(false);
         card.add(timeLabel, 2, 2);
 
-        description = new Label("Tujuan Kaunseling");
-        description.setMinWidth(100);
-        description.setMaxWidth(100);
+        description = new Label("Sesi");
+        description.setMinWidth(70);
+        description.setMaxWidth(70);
         card.add(description, 1, 3);
         descriptionForm = new TextArea();
-        descriptionForm.setWrapText(false);
+        descriptionForm.setWrapText(true);
         descriptionForm.setMinWidth(235);
         descriptionForm.setMaxWidth(235);
         descriptionForm.setMinHeight(100);
@@ -162,49 +162,53 @@ public class Session {
         card.add(sessionID, 0, 0);
 
         date = new Label("Tarikh");
-        date.setMinWidth(100);
-        date.setMaxWidth(100);
+        date.setMinWidth(70);
+        date.setMaxWidth(70);
         card.add(date, 1, 1);
         dateForm = new DatePicker();
         dateForm.setValue(LocalDate.parse(Date, DateTimeFormatter.ofPattern("dd/MM/uuuu")));
-        dateForm.setMinWidth(150);
-        dateForm.setMaxWidth(150);
+        dateForm.setMinWidth(180);
+        dateForm.setMaxWidth(180);
         dateForm.setVisible(false);
         card.add(dateForm, 2, 1);
         dateLabel = new Label(Date);
-        dateLabel.setMinWidth(150);
-        dateLabel.setMaxWidth(150);
+        dateLabel.setMinWidth(180);
+        dateLabel.setMaxWidth(180);
         dateLabel.setVisible(true);
         card.add(dateLabel, 2, 1);
 
         time = new Label("Masa");
-        time.setMinWidth(100);
-        time.setMaxWidth(100);
+        time.setMinWidth(70);
+        time.setMaxWidth(70);
         card.add(time, 1, 2);
         timeForm = new TextField(Time);
-        timeForm.setMinWidth(150);
-        timeForm.setMaxWidth(150);
+        timeForm.setMinWidth(180);
+        timeForm.setMaxWidth(180);
         timeForm.setVisible(false);
         card.add(timeForm, 2, 2);
         timeLabel = new Label(Time);
-        timeLabel.setMinWidth(150);
-        timeLabel.setMaxWidth(150);
+        timeLabel.setMinWidth(180);
+        timeLabel.setMaxWidth(180);
         timeLabel.setVisible(true);
         card.add(timeLabel, 2, 2);
 
-        description = new Label("Tujuan Kaunseling");
-        description.setMinWidth(100);
-        description.setMaxWidth(100);
+        description = new Label("Sesi");
+        description.setMinWidth(70);
+        description.setMaxWidth(70);
         card.add(description, 1, 3);
-        descriptionForm = new TextArea(Description);
-        descriptionForm.setWrapText(false);
+        String des = Description;
+        if(des.contains("|")){
+            des = des.replace("|", "\n");
+        }
+        descriptionForm = new TextArea(des);
+        descriptionForm.setWrapText(true);
         descriptionForm.setMinWidth(235);
         descriptionForm.setMaxWidth(235);
         descriptionForm.setMinHeight(100);
         descriptionForm.setMaxHeight(100);
         descriptionForm.setVisible(false);
         card.add(descriptionForm, 2, 3, 3, 1);
-        descriptionLabel = new Label(Description);
+        descriptionLabel = new Label(des);
         descriptionLabel.setMinWidth(235);
         descriptionLabel.setMaxWidth(235);
         descriptionLabel.setMinHeight(100);
@@ -246,7 +250,11 @@ public class Session {
             setTime(timeForm.getText());
             setDescription(descriptionForm.getText());
 
-            String[] session = {getID(), studentInfo[0], getDate(), getTime(), getDescription()};
+            String des = getDescription();
+            if(des.contains("\n")){
+                des = des.replace("\n", "|");
+            }
+            String[] session = {getID(), studentInfo[0], getDate(), getTime(), des};
 
             dateLabel.setText(getDate());
             timeLabel.setText(getTime());

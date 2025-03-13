@@ -151,7 +151,11 @@ public class Details {
                 XWPFTableRow tableRow = sessionTable.createRow();
                 tableRow.getCell(0).setText(sessions.get(i)[2]);
                 tableRow.getCell(1).setText(sessions.get(i)[3]);
-                tableRow.getCell(2).setText(sessions.get(i)[4]);
+                String des = sessions.get(i)[4];
+                if(des.contains("|")){
+                    des = des.replace("|", " ");
+                }
+                tableRow.getCell(2).setText(des);
             }
 
             //Creating a File chooser
